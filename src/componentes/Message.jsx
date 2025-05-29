@@ -1,15 +1,18 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Sidebar from './Sidebar';
 import { sidebarIcons } from './SidebarIcons';
-import EmojiPicker from 'emoji-picker-react';
-import { FaFilePdf, FaFileWord, FaFileImage, FaFileAlt, FaFile } from 'react-icons/fa';
+// Reemplaza emoji-picker-react por emoji-mart
+import Picker from '@emoji-mart/react';
+import data from '@emoji-mart/data';
+import { FaFilePdf, FaFileWord, FaFileExcel, FaFilePowerpoint, FaFileImage, FaFileAlt, FaFileArchive, FaFile } from "react-icons/fa";
+import emojiFlags from 'emoji-flags';
 import './css/message.css';
 
 const users = [
-  { 
-    id: 1, 
-    name: 'Betty Gregory', 
-    lastMessage: 'See you soon!', 
+  {
+    id: 1,
+    name: 'Betty Gregory',
+    lastMessage: 'See you soon!',
     time: '1:25 pm',
     avatar: 'https://randomuser.me/api/portraits/women/32.jpg',
     messages: [
@@ -18,10 +21,10 @@ const users = [
       { from: 'Betty Gregory', text: 'See you soon!', time: '1:25 pm' },
     ]
   },
-  { 
-    id: 2, 
-    name: 'Garrett Huff', 
-    lastMessage: 'Thanks!', 
+  {
+    id: 2,
+    name: 'Garrett Huff',
+    lastMessage: 'Thanks!',
     time: '12:10 pm',
     avatar: 'https://randomuser.me/api/portraits/men/45.jpg',
     messages: [
@@ -30,10 +33,10 @@ const users = [
       { from: 'Garrett Huff', text: 'Thanks!', time: '12:10 pm' },
     ]
   },
-  { 
-    id: 3, 
-    name: 'Janie Parker', 
-    lastMessage: "Let's meet tomorrow.", 
+  {
+    id: 3,
+    name: 'Janie Parker',
+    lastMessage: "Let's meet tomorrow.",
     time: '11:00 am',
     avatar: 'https://randomuser.me/api/portraits/women/65.jpg',
     messages: [
@@ -45,13 +48,27 @@ const users = [
 ];
 
 function getFileIcon(file) {
-  if (!file) return <FaFile />;
+  if (!file) return <FaFile color="#888" size={24} />;
   const ext = file.name.split('.').pop().toLowerCase();
-  if (file.type && file.type.startsWith('image/')) return <FaFileImage color="#4a90e2" size={24} />;
-  if (ext === 'pdf') return <FaFilePdf color="#e74c3c" size={24} />;
-  if (ext === 'doc' || ext === 'docx') return <FaFileWord color="#2b579a" size={24} />;
-  if (ext === 'txt') return <FaFileAlt color="#888" size={24} />;
+  if (file.type && file.type.startsWith('image/')) return <FaFileImage color="#4caf50" size={24} />;
+  if (ext === 'pdf') return <FaFilePdf color="#e53935" size={24} />;
+  if (ext === 'doc' || ext === 'docx') return <FaFileWord color="#1976d2" size={24} />;
+  if (ext === 'xls' || ext === 'xlsx') return <FaFileExcel color="#388e3c" size={24} />;
+  if (ext === 'ppt' || ext === 'pptx') return <FaFilePowerpoint color="#f57c00" size={24} />;
+  if (ext === 'zip' || ext === 'rar' || ext === '7z') return <FaFileArchive color="#6d4c41" size={24} />;
+  if (ext === 'txt' || ext === 'md' || ext === 'csv') return <FaFileAlt color="#757575" size={24} />;
   return <FaFile color="#888" size={24} />;
+}
+
+function replaceFlagsWithImages(text) {
+  // Reemplaza banderas por imagen (sin texto extra)
+  return text.replace(/([\uD83C][\uDDE6-\uDDFF][\uD83C][\uDDE6-\uDDFF])/g, (match, flag) => {
+    const flagData = emojiFlags.data.find(f => f.emoji === flag);
+    if (flagData) {
+      return `<img src="https://cdnjs.cloudflare.com/ajax/libs/emoji-flags/1.3.0/flags/4x3/${flagData.code.toLowerCase()}.svg" alt="${flagData.name}" title="${flagData.name}" style="width: 1.5em; vertical-align: middle; display: inline-block;" />`;
+    }
+    return match;
+  });
 }
 
 const Message = () => {
@@ -76,6 +93,8 @@ const Message = () => {
   const [replyTo, setReplyTo] = useState(null);
   const [replyLeaving, setReplyLeaving] = useState(false);
   const touchStartX = useRef(0);
+  const [fileAnim, setFileAnim] = useState(false);
+  const [fileLeaving, setFileLeaving] = useState(false);
 
   // Actualizar mensajes cuando cambia el usuario seleccionado
   useEffect(() => {
@@ -101,13 +120,18 @@ const Message = () => {
     user.name.toLowerCase().includes(search.toLowerCase())
   );
 
-  // Handler para emoji-picker-react
-  const handleEmojiSelect = (emojiData) => {
-    setInput(input + emojiData.emoji);
-    // Ya no cerramos el selector para permitir seleccionar múltiples emojis
-    // setShowEmojiPicker(false);
+  // Nuevo handler para emoji-mart
+  const handleEmojiSelect = (emoji) => {
+    setInput(input + emoji.native);
     textareaRef.current.focus();
   };
+
+  useEffect(() => {
+    if (selectedFile && !imagePreview) {
+      setFileAnim(true);
+      setTimeout(() => setFileAnim(false), 300); // Duración igual al CSS
+    }
+  }, [selectedFile, imagePreview]);
 
   // Cierra el picker si se hace clic fuera
   useEffect(() => {
@@ -148,6 +172,7 @@ const Message = () => {
   // Limpia el archivo seleccionado al enviar mensaje
   const handleSend = (e) => {
     e.preventDefault();
+    console.log('input antes de enviar:', input);
     if (input.trim() === '' && !selectedFile) return;
 
     let finalImage = imagePreview;
@@ -181,20 +206,27 @@ const Message = () => {
     }
   };
   const sendMessage = (finalImage) => {
+    let fileObj = null;
+    if (selectedFile && !finalImage) {
+      fileObj = {
+        name: selectedFile.name,
+        url: URL.createObjectURL(selectedFile),
+        type: selectedFile.type,
+      };
+    }
     const newMessage = {
       from: 'Yo',
       text: input,
       time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-      file: selectedFile,
+      file: fileObj,
       imagePreview: finalImage,
       replyTo: replyTo,
     };
-    
+
     // Actualizar mensajes del usuario actual
     const updatedMessages = [...messages, newMessage];
     setMessages(updatedMessages);
 
-    
     setInput('');
     setSelectedFile(null);
     setImagePreview(null);
@@ -358,7 +390,10 @@ const Message = () => {
                     <span className="reply-text">{msg.replyTo.text}</span>
                   </div>
                 )}
-                <div className="chat-bubble-text">{msg.text}</div>
+                <div
+                  className="chat-bubble-text"
+                  dangerouslySetInnerHTML={{ __html: replaceFlagsWithImages(msg.text) }}
+                />
                 <div className="chat-bubble-time">{msg.time}</div>
                 {msg.from !== 'Yo' && (
                   <button
@@ -369,7 +404,11 @@ const Message = () => {
                     }}
                     title="Responder"
                     tabIndex={-1}
-                  ><sidebarIcons.responder /></button>
+                  >
+                    {msg.from === 'Yo'
+                      ? <sidebarIcons.MeResponer />
+                      : <sidebarIcons.responder />}
+                  </button>
                 )}
                 {/* ...imagen y archivo si existen... */}
                 {msg.imagePreview && (
@@ -383,9 +422,32 @@ const Message = () => {
                   </div>
                 )}
                 {msg.file && !msg.imagePreview && (
-                  <div style={{ marginTop: 8, fontSize: 12, color: '#555', display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <div
+                    className="file-bubble"
+                    style={{
+                      background: '#f5f5f5',
+                      borderLeft: '4px solid #1976d2',
+                      borderRadius: 8,
+                      padding: '8px 12px',
+                      margin: '8px 0',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 10,
+                      maxWidth: 320,
+                      boxShadow: '0 1px 4px #0001'
+                    }}
+                  >
                     {getFileIcon(msg.file)}
-                    <span>Archivo: {msg.file.name}</span>
+                    <a
+                      href={msg.file.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{ color: '#1976d2', textDecoration: 'underline', fontWeight: 500, flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+                      download={msg.file.name}
+                      title={msg.file.name}
+                    >
+                      {msg.file.name}
+                    </a>
                   </div>
                 )}
               </div>
@@ -527,6 +589,64 @@ const Message = () => {
             <button className="reply-cancel" onClick={handleCancelReply}>✕</button>
           </div>
         )}
+        {selectedFile && !imagePreview && (
+          <div
+            className={`file-preview-animate${fileAnim ? ' file-preview-animate-enter' : ''}${fileLeaving ? ' file-preview-animate-leave' : ''}`}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 8,
+              margin: '12px 0 4px 0',
+              fontSize: 15,
+              color: '#333',
+              width: 'fit-content',
+              maxWidth: 320,
+              padding: '8px 30px',
+            }}
+          >
+            {getFileIcon(selectedFile)}
+            <span
+              style={{
+                fontWeight: 500,
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+                maxWidth: 180,
+              }}
+              title={selectedFile.name}
+            >
+              {selectedFile.name}
+            </span>
+            <button
+              type="button"
+              onClick={() => {
+                setFileLeaving(true);
+                setTimeout(() => {
+                  setSelectedFile(null);
+                  setFileLeaving(false);
+                  if (fileInputRef.current) fileInputRef.current.value = '';
+                }, 300); // Debe coincidir con la duración de la animación
+              }}
+              style={{
+                background: 'none',
+                border: 'none',
+                color: '#c00',
+                fontSize: 18,
+                cursor: 'pointer',
+                marginLeft: 4,
+                padding: 0,
+                lineHeight: 1,
+                display: 'flex',
+                alignItems: 'center'
+              }}
+              aria-label="Eliminar archivo"
+              title="Eliminar archivo"
+            >
+              ✕
+            </button>
+          </div>
+        )}
+
         <form
           className="msg-input-form"
           onSubmit={handleSend}
@@ -551,7 +671,14 @@ const Message = () => {
                   zIndex: 10
                 }}
               >
-                <EmojiPicker onEmojiClick={handleEmojiSelect} />
+                <Picker
+                  data={data}
+                  onEmojiSelect={handleEmojiSelect}
+                  theme="light"
+                  previewPosition="none"
+                  searchPosition="none"
+                  navPosition="top"
+                />
               </div>
             )}
 

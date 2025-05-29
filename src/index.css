@@ -18,6 +18,10 @@ body {
   background: #f5f6fa;
 }
 
+body, .msg-input, .chat-bubble-text {
+  font-family: 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji', 'Apple Color Emoji', 'Arial', sans-serif;
+}
+
 .msg-input,
 .msg-input::placeholder {
   color: #222;

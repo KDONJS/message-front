@@ -12,7 +12,8 @@ import {
   Search,
   Paperclip,
   Smile,
-  CornerDownRight
+  CornerDownRight,
+  CornerDownLeft
 } from 'lucide-react';
 
 export const sidebarIcons = {
@@ -29,5 +30,6 @@ export const sidebarIcons = {
   buscar: Search,
   clip: Paperclip,
   emoji: Smile,
-  responder: CornerDownRight
+  responder: CornerDownRight,
+  MeResponer: CornerDownLeft
 };
