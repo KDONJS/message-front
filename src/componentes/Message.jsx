@@ -192,19 +192,7 @@ const Message = () => {
     // Actualizar mensajes del usuario actual
     const updatedMessages = [...messages, newMessage];
     setMessages(updatedMessages);
-    
-    // Actualizar el array de usuarios con los nuevos mensajes
-    const updatedUsers = users.map(user => {
-      if (user.id === selectedUser.id) {
-        return {
-          ...user,
-          messages: updatedMessages,
-          lastMessage: input || 'Archivo enviado',
-          time: newMessage.time
-        };
-      }
-      return user;
-    });
+
     
     setInput('');
     setSelectedFile(null);
