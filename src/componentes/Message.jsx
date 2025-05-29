@@ -3,6 +3,7 @@ import Sidebar from './Sidebar';
 import { sidebarIcons } from './SidebarIcons';
 import EmojiPicker from 'emoji-picker-react';
 import { FaFilePdf, FaFileWord, FaFileImage, FaFileAlt, FaFile } from 'react-icons/fa';
+import './css/message.css';
 
 const users = [
   { 
