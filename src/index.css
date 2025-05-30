@@ -16,6 +16,7 @@ body {
   margin: 0;
   padding: 0;
   background: #f5f6fa;
+  padding-top: env(safe-area-inset-top, 0px);
 }
 
 body, .msg-input, .chat-bubble-text {
@@ -279,6 +280,7 @@ body, .msg-input, .chat-bubble-text {
   height: 100vh;
   background: transparent !important;
   overflow: hidden;
+  padding-top: env(safe-area-inset-top, 0px);
 }
 
 /* Sidebar */
@@ -396,6 +398,7 @@ body, .msg-input, .chat-bubble-text {
   font-weight: bold;
   font-size: 20px;
   padding: 0 24px;
+  padding-top: env(safe-area-inset-top, 16px);
 }
 
 /* Fuera del media query: estilos base para la barra */

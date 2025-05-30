@@ -102,7 +102,7 @@ const Message = () => {
   const menuRef = useRef();
   const [longPressTimer, setLongPressTimer] = useState(null);
 
-  // Eliminadas variables no usadas: none, todas las variables están en uso.
+  // Limpieza: No hay variables sin uso. Todas las variables están siendo utilizadas en el componente.
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -238,15 +238,6 @@ const Message = () => {
     }
   };
 
-  const handleTouchStart = (e) => {
-    touchStartX.current = e.touches[0].clientX;
-  };
-  const handleTouchEnd = (msg, e) => {
-    const deltaX = e.changedTouches[0].clientX - touchStartX.current;
-    if (deltaX > 60) {
-      setReplyTo(msg);
-    }
-  };
   const sendMessage = (finalImage) => {
     let fileObj = null;
     if (selectedFile && !finalImage) {
@@ -432,8 +423,21 @@ const Message = () => {
             >
               <div
                 className={`chat-bubble${msg.from === 'Yo' ? ' me' : ''}`}
-                onTouchStart={isMobile ? handleTouchStart : undefined}
-                onTouchEnd={isMobile ? (e) => handleTouchEnd(msg, e) : undefined}
+                // SOLO EN MÓVIL: long press para abrir menú
+                onTouchStart={isMobile ? (e) => {
+                  touchStartX.current = e.touches[0].clientX;
+                  const timer = setTimeout(() => {
+                    setActionMenuIdx(idx);
+                  }, 2000); // 2 segundos
+                  setLongPressTimer(timer);
+                } : undefined}
+                onTouchEnd={isMobile ? (e) => {
+                  if (longPressTimer) clearTimeout(longPressTimer);
+                  const deltaX = e.changedTouches[0].clientX - touchStartX.current;
+                  if (deltaX > 60) {
+                    setReplyTo(msg);
+                  }
+                } : undefined}
               >
                 {msg.forwarded && (
                   <div className="forwarded-label">
@@ -458,32 +462,23 @@ const Message = () => {
                     dangerouslySetInnerHTML={{ __html: replaceFlagsWithImages(msg.text) }}
                     style={{ flex: 1 }}
                   />
-                  <button
-                    className={`bubble-menu-btn${actionMenuIdx === idx ? ' active' : ''}`}
-                    onClick={e => {
-                      if (!isMobile) {
+                  {/* Botón ⋮ solo en desktop */}
+                  {!isMobile && (
+                    <button
+                      className={`bubble-menu-btn${actionMenuIdx === idx ? ' active' : ''}`}
+                      onClick={e => {
                         e.stopPropagation();
                         setActionMenuIdx(actionMenuIdx === idx ? null : idx);
-                      }
-                    }}
-                    onTouchStart={isMobile ? (e) => {
-                      const timer = setTimeout(() => {
-                        setActionMenuIdx(idx);
-                      }, 1000); // 1 segundo
-                      setLongPressTimer(timer);
-                    } : undefined}
-                    onTouchEnd={isMobile ? () => {
-                      if (longPressTimer) clearTimeout(longPressTimer);
-                    } : undefined}
-                    tabIndex={-1}
-                    style={{ visibility: isMobile ? (actionMenuIdx === idx ? 'visible' : 'hidden') : 'visible' }}
-                  >
-                    ⋮
-                  </button>
+                      }}
+                      tabIndex={-1}
+                      style={{ visibility: 'visible' }}
+                    >
+                      ⋮
+                    </button>
+                  )}
                 </div>
                 <div className="chat-bubble-time">{msg.time}</div>
-
-                {/* Menú de acciones: para todos los mensajes, y se posiciona según el lado */}
+                {/* Menú de acciones */}
                 {actionMenuIdx === idx && (
                   <div
                     className="bubble-action-menu"
