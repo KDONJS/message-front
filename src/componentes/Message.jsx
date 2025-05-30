@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Sidebar from './Sidebar';
 import { sidebarIcons } from './SidebarIcons';
-// Reemplaza emoji-picker-react por emoji-mart
 import Picker from '@emoji-mart/react';
 import data from '@emoji-mart/data';
 import { FaFilePdf, FaFileWord, FaFileExcel, FaFilePowerpoint, FaFileImage, FaFileAlt, FaFileArchive, FaFile } from "react-icons/fa";
@@ -61,7 +60,6 @@ function getFileIcon(file) {
 }
 
 function replaceFlagsWithImages(text) {
-  // Reemplaza banderas por imagen (sin texto extra)
   return text.replace(/([\uD83C][\uDDE6-\uDDFF][\uD83C][\uDDE6-\uDDFF])/g, (match, flag) => {
     const flagData = emojiFlags.data.find(f => f.emoji === flag);
     if (flagData) {
@@ -83,7 +81,6 @@ const Message = () => {
   const textareaRef = useRef(null);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
-  // Nuevos estados para archivos
   const [selectedFile, setSelectedFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const fileInputRef = useRef(null);
@@ -94,9 +91,10 @@ const Message = () => {
   const [replyLeaving, setReplyLeaving] = useState(false);
   const touchStartX = useRef(0);
   const [fileAnim, setFileAnim] = useState(false);
+  const emojiPickerRef = useRef(null);
+  const emojiButtonRef = useRef(null);
   const [fileLeaving, setFileLeaving] = useState(false);
 
-  // Actualizar mensajes cuando cambia el usuario seleccionado
   useEffect(() => {
     setMessages(selectedUser.messages);
   }, [selectedUser]);
@@ -120,7 +118,6 @@ const Message = () => {
     user.name.toLowerCase().includes(search.toLowerCase())
   );
 
-  // Nuevo handler para emoji-mart
   const handleEmojiSelect = (emoji) => {
     setInput(input + emoji.native);
     textareaRef.current.focus();
@@ -129,11 +126,10 @@ const Message = () => {
   useEffect(() => {
     if (selectedFile && !imagePreview) {
       setFileAnim(true);
-      setTimeout(() => setFileAnim(false), 300); // Duración igual al CSS
+      setTimeout(() => setFileAnim(false), 300);
     }
   }, [selectedFile, imagePreview]);
 
-  // Cierra el picker si se hace clic fuera
   useEffect(() => {
     if (!showEmojiPicker) return;
     const handleClickOutside = (e) => {
@@ -149,15 +145,10 @@ const Message = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [showEmojiPicker]);
 
-  const emojiPickerRef = useRef(null);
-  const emojiButtonRef = useRef(null);
-
-  // Handler para el botón del clip
   const handleClipClick = () => {
     fileInputRef.current.click();
   };
 
-  // Handler para el input file
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     setSelectedFile(file);
@@ -169,10 +160,8 @@ const Message = () => {
     }
   };
 
-  // Limpia el archivo seleccionado al enviar mensaje
   const handleSend = (e) => {
     e.preventDefault();
-    console.log('input antes de enviar:', input);
     if (input.trim() === '' && !selectedFile) return;
 
     let finalImage = imagePreview;
@@ -201,7 +190,7 @@ const Message = () => {
   };
   const handleTouchEnd = (msg, e) => {
     const deltaX = e.changedTouches[0].clientX - touchStartX.current;
-    if (deltaX > 60) { // Ajusta el umbral si quieres
+    if (deltaX > 60) {
       setReplyTo(msg);
     }
   };
@@ -223,7 +212,6 @@ const Message = () => {
       replyTo: replyTo,
     };
 
-    // Actualizar mensajes del usuario actual
     const updatedMessages = [...messages, newMessage];
     setMessages(updatedMessages);
 
@@ -240,7 +228,7 @@ const Message = () => {
     setTimeout(() => {
       setReplyTo(null);
       setReplyLeaving(false);
-    }, 350); // Debe coincidir con la duración de la animación
+    }, 350);
   };
 
   useEffect(() => {
@@ -252,7 +240,7 @@ const Message = () => {
 
     const getStroke = () => {
       if (tool === 'highlight') {
-        ctx.globalAlpha = 0.18; // Más transparente
+        ctx.globalAlpha = 0.18;
         ctx.strokeStyle = '#ffeb3b';
         ctx.lineWidth = 16;
         ctx.globalCompositeOperation = 'source-over';
@@ -265,7 +253,7 @@ const Message = () => {
         ctx.globalAlpha = 1;
         ctx.strokeStyle = 'rgba(0,0,0,1)';
         ctx.lineWidth = 18;
-        ctx.globalCompositeOperation = 'destination-out'; // Borra solo lo dibujado
+        ctx.globalCompositeOperation = 'destination-out';
       }
       ctx.lineCap = 'round';
     };
@@ -301,9 +289,9 @@ const Message = () => {
       canvas.removeEventListener('mouseleave', stopDraw);
     };
   }, [drawingMode, tool]);
+
   return (
     <div className="app-container">
-      {/* Sidebar principal SOLO en móvil como drawer */}
       {isMobile && mainSidebarOpen && (
         <Sidebar
           open={mainSidebarOpen}
@@ -312,7 +300,6 @@ const Message = () => {
         />
       )}
 
-      {/* Sidebar de chat SOLO en móvil */}
       <div className={`sidebar${sidebarOpen ? ' sidebar-mobile-open' : ''}`}>
         <button
           className="sidebar-close-btn"
@@ -351,10 +338,8 @@ const Message = () => {
         </div>
       </div>
 
-      {/* Chat panel */}
       <div className="chat-panel">
         <div className="chat-header">
-          {/* Botón de menú SOLO en móvil */}
           {isMobile && (
             mainSidebarOpen ? (
               <button
@@ -372,7 +357,6 @@ const Message = () => {
               </button>
             )
           )}
-
           {selectedUser.name}
         </div>
 
@@ -410,7 +394,6 @@ const Message = () => {
                       : <sidebarIcons.responder />}
                   </button>
                 )}
-                {/* ...imagen y archivo si existen... */}
                 {msg.imagePreview && (
                   <div style={{ marginTop: 8 }}>
                     <img
@@ -456,7 +439,6 @@ const Message = () => {
           <div ref={messagesEndRef} />
         </div>
 
-
         {selectedFile && imagePreview && (
           <div
             style={{
@@ -477,7 +459,6 @@ const Message = () => {
               zIndex: 10,
             }}
           >
-            {/* Botones de herramientas */}
             <div style={{ position: 'absolute', top: 8, left: 8, display: 'flex', gap: 12, zIndex: 3 }}>
               <button
                 type="button"
@@ -516,7 +497,6 @@ const Message = () => {
                 onClick={() => { setDrawingMode(true); setTool('eraser'); }}
               >🧽</button>
             </div>
-            {/* Botón de eliminar */}
             <button
               type="button"
               onClick={() => {
@@ -625,7 +605,7 @@ const Message = () => {
                   setSelectedFile(null);
                   setFileLeaving(false);
                   if (fileInputRef.current) fileInputRef.current.value = '';
-                }, 300); // Debe coincidir con la duración de la animación
+                }, 300);
               }}
               style={{
                 background: 'none',
@@ -651,7 +631,6 @@ const Message = () => {
           className="msg-input-form"
           onSubmit={handleSend}
         >
-          {/* Previsualización antes de enviar, ahora arriba del input y con botón de eliminar */}
           <div className="msg-input-box" style={{ width: '100%' }}>
             <button
               type="button"
@@ -691,7 +670,6 @@ const Message = () => {
               rows={1}
               style={{ resize: 'none', overflowY: 'auto' }}
               onKeyDown={e => {
-                // Solo en desktop: Enter envía, Shift+Enter hace salto de línea
                 if (!isMobile && e.key === 'Enter' && !e.shiftKey) {
                   e.preventDefault();
                   handleSend(e);
@@ -699,7 +677,6 @@ const Message = () => {
                 }
               }}
             />
-            {/* Input file oculto */}
             <input
               type="file"
               style={{ display: 'none' }}
@@ -743,7 +720,6 @@ const Message = () => {
         </div>
       )}
     </div>
-
   );
 };
 
