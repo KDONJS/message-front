@@ -6,6 +6,7 @@ import data from '@emoji-mart/data';
 import { FaFilePdf, FaFileWord, FaFileExcel, FaFilePowerpoint, FaFileImage, FaFileAlt, FaFileArchive, FaFile } from "react-icons/fa";
 import emojiFlags from 'emoji-flags';
 import './css/message.css';
+import { FaShare } from "react-icons/fa";
 
 const users = [
   {
@@ -94,6 +95,30 @@ const Message = () => {
   const emojiPickerRef = useRef(null);
   const emojiButtonRef = useRef(null);
   const [fileLeaving, setFileLeaving] = useState(false);
+  const [forwardModalOpen, setForwardModalOpen] = useState(false);
+  const [forwardMsg, setForwardMsg] = useState(null);
+  const [selectedForwardUser, setSelectedForwardUser] = useState(null);
+  const [actionMenuIdx, setActionMenuIdx] = useState(null);
+  const menuRef = useRef();
+  const [longPressTimer, setLongPressTimer] = useState(null);
+
+  // Eliminadas variables no usadas: none, todas las variables están en uso.
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setActionMenuIdx(null);
+      }
+    }
+    if (actionMenuIdx !== null) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [actionMenuIdx]);
 
   useEffect(() => {
     setMessages(selectedUser.messages);
@@ -121,6 +146,12 @@ const Message = () => {
   const handleEmojiSelect = (emoji) => {
     setInput(input + emoji.native);
     textareaRef.current.focus();
+  };
+
+  const handleForwardClick = (msg) => {
+    setForwardMsg(msg);
+    setForwardModalOpen(true);
+    setSelectedForwardUser(null);
   };
 
   useEffect(() => {
@@ -160,6 +191,8 @@ const Message = () => {
     }
   };
 
+  const messageRefs = useRef({});
+
   const handleSend = (e) => {
     e.preventDefault();
     if (input.trim() === '' && !selectedFile) return;
@@ -183,6 +216,26 @@ const Message = () => {
       return;
     }
     sendMessage(finalImage);
+  };
+
+  // Scroll al mensaje original al hacer click en el reply
+  const handleReplyClick = (replyMsg) => {
+    if (!replyMsg) return;
+    // Busca el índice del mensaje original
+    const idx = messages.findIndex(
+      m =>
+        m.from === replyMsg.from &&
+        m.text === replyMsg.text &&
+        m.time === replyMsg.time
+    );
+    if (idx !== -1 && messageRefs.current[idx]) {
+      messageRefs.current[idx].scrollIntoView({ behavior: 'auto', block: 'center' });
+      const el = messageRefs.current[idx];
+      el.classList.add('highlight-reply');
+      setTimeout(() => {
+        el.classList.remove('highlight-reply');
+      }, 500);
+    }
   };
 
   const handleTouchStart = (e) => {
@@ -294,20 +347,29 @@ const Message = () => {
     <div className="app-container">
       {isMobile && mainSidebarOpen && (
         <Sidebar
-          open={mainSidebarOpen}
-          onClose={() => setMainSidebarOpen(false)}
-          className={`main-sidebar${mainSidebarOpen ? ' main-sidebar-mobile-open' : ''}`}
+          className="main-sidebar"
+          onMensajesClick={() => setMainSidebarOpen(false)}
         />
       )}
-
-      <div className={`sidebar${sidebarOpen ? ' sidebar-mobile-open' : ''}`}>
-        <button
-          className="sidebar-close-btn"
+      {isMobile && (
+        <div
+          className={`sidebar-backdrop${sidebarOpen ? '' : ' hide'}`}
+          style={{ display: sidebarOpen ? 'block' : 'none' }}
           onClick={() => setSidebarOpen(false)}
-        >
-          ✕
-        </button>
-        <div className="sidebar-title">Chats</div>
+        />
+      )}
+      <div className={`sidebar${sidebarOpen ? ' sidebar-mobile-open' : ''}`}>
+        <div className="sidebar-title-row">
+          <div className="sidebar-title">Chats</div>
+          <button
+            className="sidebar-close-btn"
+            onClick={() => setSidebarOpen(false)}
+            aria-label="Cerrar"
+            title="Cerrar"
+          >
+            ✕
+          </button>
+        </div>
         <div className="sidebar-search">
           <div className="sidebar-search-box">
             <span className="sidebar-search-icon"><sidebarIcons.buscar /></span>
@@ -341,10 +403,10 @@ const Message = () => {
       <div className="chat-panel">
         <div className="chat-header">
           {isMobile && (
-            mainSidebarOpen ? (
+            sidebarOpen ? (
               <button
                 className="main-sidebar-menu-btn"
-                onClick={() => setMainSidebarOpen(false)}
+                onClick={() => setSidebarOpen(false)}
               >
                 ←
               </button>
@@ -362,38 +424,91 @@ const Message = () => {
 
         <div className="chat-messages">
           {messages.map((msg, idx) => (
-            <div className={`bubble-hover-area${msg.from === 'Yo' ? ' me' : ''}`} key={idx}>
+            <div
+              className={`bubble-hover-area${msg.from === 'Yo' ? ' me' : ''}`}
+              key={idx}
+              ref={el => (messageRefs.current[idx] = el)}
+              style={{ position: 'relative' }}
+            >
               <div
                 className={`chat-bubble${msg.from === 'Yo' ? ' me' : ''}`}
                 onTouchStart={isMobile ? handleTouchStart : undefined}
                 onTouchEnd={isMobile ? (e) => handleTouchEnd(msg, e) : undefined}
               >
+                {msg.forwarded && (
+                  <div className="forwarded-label">
+                    <FaShare style={{ transform: 'scaleX(-1)', marginRight: 4, fontSize: 13, verticalAlign: 'middle' }} />
+                    <span>Reenviado</span>
+                  </div>
+                )}
+
                 {msg.replyTo && (
-                  <div className="reply-to">
+                  <div
+                    className="reply-to"
+                    style={{ cursor: 'pointer' }}
+                    onClick={() => handleReplyClick(msg.replyTo)}
+                  >
                     <span className="reply-from">{msg.replyTo.from}:</span>
                     <span className="reply-text">{msg.replyTo.text}</span>
                   </div>
                 )}
-                <div
-                  className="chat-bubble-text"
-                  dangerouslySetInnerHTML={{ __html: replaceFlagsWithImages(msg.text) }}
-                />
-                <div className="chat-bubble-time">{msg.time}</div>
-                {msg.from !== 'Yo' && (
+                <div className="chat-bubble-content">
+                  <div
+                    className="chat-bubble-text"
+                    dangerouslySetInnerHTML={{ __html: replaceFlagsWithImages(msg.text) }}
+                    style={{ flex: 1 }}
+                  />
                   <button
-                    className="reply-btn"
-                    onClick={() => {
-                      setReplyTo(msg);
-                      setTimeout(() => textareaRef.current && textareaRef.current.focus(), 0);
+                    className={`bubble-menu-btn${actionMenuIdx === idx ? ' active' : ''}`}
+                    onClick={e => {
+                      if (!isMobile) {
+                        e.stopPropagation();
+                        setActionMenuIdx(actionMenuIdx === idx ? null : idx);
+                      }
                     }}
-                    title="Responder"
+                    onTouchStart={isMobile ? (e) => {
+                      const timer = setTimeout(() => {
+                        setActionMenuIdx(idx);
+                      }, 1000); // 1 segundo
+                      setLongPressTimer(timer);
+                    } : undefined}
+                    onTouchEnd={isMobile ? () => {
+                      if (longPressTimer) clearTimeout(longPressTimer);
+                    } : undefined}
                     tabIndex={-1}
+                    style={{ visibility: isMobile ? (actionMenuIdx === idx ? 'visible' : 'hidden') : 'visible' }}
                   >
-                    {msg.from === 'Yo'
-                      ? <sidebarIcons.MeResponer />
-                      : <sidebarIcons.responder />}
+                    ⋮
                   </button>
+                </div>
+                <div className="chat-bubble-time">{msg.time}</div>
+
+                {/* Menú de acciones: para todos los mensajes, y se posiciona según el lado */}
+                {actionMenuIdx === idx && (
+                  <div
+                    className="bubble-action-menu"
+                    ref={menuRef}
+                    style={{
+                      position: 'absolute',
+                      top: 0,
+                      ...(msg.from === 'Yo'
+                        ? { left: 0, right: 'auto', marginLeft: 0, marginRight: 8 }
+                        : { left: '100%', marginLeft: 8 }),
+                      background: '#fff',
+                      border: '1px solid #ddd',
+                      borderRadius: 10,
+                      boxShadow: '0 4px 16px #0002',
+                      zIndex: 10,
+                      minWidth: 140,
+                      padding: '8px 0'
+                    }}
+                  >
+                    <button className="bubble-action-item" onClick={() => { setReplyTo(msg); setActionMenuIdx(null); }}>Responder</button>
+                    <button className="bubble-action-item" onClick={() => { handleForwardClick(msg); setActionMenuIdx(null); }}>Reenviar</button>
+                    <button className="bubble-action-item" onClick={() => { /* lógica de reacción */ setActionMenuIdx(null); }}>Reaccionar</button>
+                  </div>
                 )}
+
                 {msg.imagePreview && (
                   <div style={{ marginTop: 8 }}>
                     <img
@@ -626,7 +741,59 @@ const Message = () => {
             </button>
           </div>
         )}
-
+        {forwardModalOpen && (
+          <div className="forward-modal">
+            <div className="forward-modal-content">
+              <div className="forward-modal-header">
+                <span>Reenviar mensaje a</span>
+                <button onClick={() => setForwardModalOpen(false)}>✕</button>
+              </div>
+              <input
+                type="text"
+                placeholder="Buscar"
+                value={search}
+                onChange={e => setSearch(e.target.value)}
+                className="forward-modal-search"
+              />
+              <div className="forward-modal-users">
+                {filteredUsers.map(user => (
+                  <div
+                    key={user.id}
+                    className={`forward-user${selectedForwardUser && selectedForwardUser.id === user.id ? ' selected' : ''}`}
+                    onClick={() => setSelectedForwardUser(user)}
+                  >
+                    <img src={user.avatar} alt={user.name} className="forward-user-avatar" />
+                    <span>{user.name}</span>
+                  </div>
+                ))}
+              </div>
+              <button
+                className="forward-modal-send"
+                disabled={!selectedForwardUser}
+                onClick={() => {
+                  if (!selectedForwardUser) return;
+                  const msgToSend = {
+                    ...forwardMsg,
+                    from: 'Yo',
+                    time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                    forwarded: true
+                  };
+                  selectedForwardUser.messages.push(msgToSend);
+                  setForwardModalOpen(false);
+                  setSelectedUser(selectedForwardUser);
+                  setTimeout(() => {
+                    setMessages(selectedForwardUser.messages);
+                    if (messagesEndRef.current) {
+                      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+                    }
+                  }, 0);
+                }}
+              >
+                Reenviar
+              </button>
+            </div>
+          </div>
+        )}
         <form
           className="msg-input-form"
           onSubmit={handleSend}

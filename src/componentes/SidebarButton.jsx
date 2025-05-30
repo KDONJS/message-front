@@ -46,26 +46,30 @@ const SidebarButton = forwardRef(({ icon, label, to, onClick, expandido, isActiv
   }
 
   return (
-    <Link to={to} style={{ textDecoration: 'none' }}>
-      <div
-        ref={ref}
-        style={{
-          position: 'relative',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: expandido ? 'flex-start' : 'center',
-          width: expandido ? '100%' : '40px',
-          height: '40px',
-          margin: '8px 12px',
-          fontWeight: isActive ? 'bold' : 'normal',
-          cursor: 'pointer',
-          color: isActive ? '#183366' : '#fff',
-          background: 'transparent',
-          borderRadius: expandido ? '24px' : '16px',
-          zIndex: 2,
-          transition: 'color 0.2s, font-weight 0.2s, border-radius 0.3s'
-        }}
-      >
+    <Link
+    to={to}
+    style={{ textDecoration: 'none' }}
+  >
+    <div
+      ref={ref}
+      onClick={onClick} // <-- Mueve el onClick aquí
+      style={{
+        position: 'relative',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: expandido ? 'flex-start' : 'center',
+        width: expandido ? '100%' : '40px',
+        height: '40px',
+        margin: '8px 12px',
+        fontWeight: isActive ? 'bold' : 'normal',
+        cursor: 'pointer',
+        color: isActive ? '#183366' : '#fff',
+        background: 'transparent',
+        borderRadius: expandido ? '24px' : '16px',
+        zIndex: 2,
+        transition: 'color 0.2s, font-weight 0.2s, border-radius 0.3s'
+      }}
+    >
         <span
           style={{
             fontSize: '1.2rem',

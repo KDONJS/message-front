@@ -15,11 +15,10 @@ const navButtons = [
   { icon: <sidebarIcons.logout />, label: "Cerrar sesión", to: "/logout" }
 ];
 
-const Sidebar = ({ className = "" }) => {
+const Sidebar = ({ className = "", onMensajesClick }) => {
   const [expandido, setExpandido] = useState(true);
   const location = useLocation();
   const navigate = useNavigate();
-  console.log('Sidebar location:', location);
 
   const activeIndex = useMemo(
     () => navButtons.findIndex(btn => btn.to === location.pathname),
@@ -56,12 +55,18 @@ const Sidebar = ({ className = "" }) => {
     setExpandido(prev => !prev);
   };
 
-  // Manejo especial para el botón de logout
+  // Manejo especial para el botón de logout y para "Mensajes"
   const handleNavClick = (to) => {
     if (to === '/logout') {
       navigate('/logout', { state: { backgroundLocation: location } });
     } else {
       navigate(to);
+      if (to === '/mensajes' && typeof onMensajesClick === 'function') {
+        onMensajesClick(); // Oculta el sidebar solo al seleccionar "Mensajes"
+      
+      if (to === '/mensajes') {
+      setExpandido(false); // <-- Esto hace que también colapse/expanda
+    } } 
     }
   };
 
