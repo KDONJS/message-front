@@ -17,6 +17,7 @@ const navButtons = [
 
 const Sidebar = ({ className = "", onMensajesClick }) => {
   const [expandido, setExpandido] = useState(true);
+  const [expandidoPorPanel, setExpandidoPorPanel] = useState(true);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -51,22 +52,37 @@ const Sidebar = ({ className = "", onMensajesClick }) => {
     };
   }, [activeIndex, expandido]);
 
+
+
+
   const handleToggle = () => {
     setExpandido(prev => !prev);
+    setExpandidoPorPanel(prev => !prev); // Solo el panel cambia este estado
   };
 
-  // Manejo especial para el botón de logout y para "Mensajes"
   const handleNavClick = (to) => {
     if (to === '/logout') {
       navigate('/logout', { state: { backgroundLocation: location } });
+      return;
+    }
+
+    navigate(to);
+
+    if (to === '/mensajes') {
+      // Solo colapsa si el panel está expandido por el botón del panel
+      if (expandido && expandidoPorPanel) {
+        setExpandido(false);
+        // NO cambies expandidoPorPanel aquí
+      }
+      if (typeof onMensajesClick === 'function') {
+        onMensajesClick();
+      }
     } else {
-      navigate(to);
-      if (to === '/mensajes' && typeof onMensajesClick === 'function') {
-        onMensajesClick(); // Oculta el sidebar solo al seleccionar "Mensajes"
-      
-      if (to === '/mensajes') {
-      setExpandido(false); // <-- Esto hace que también colapse/expanda
-    } } 
+      // Solo expande si el panel está expandido por el panel
+      if (expandidoPorPanel) {
+        setExpandido(true);
+      }
+      // Si el panel está colapsado por el panel, no expandas aquí
     }
   };
 
@@ -77,17 +93,17 @@ const Sidebar = ({ className = "", onMensajesClick }) => {
         className
           ? undefined
           : {
-              width: expandido ? '280px' : '60px',
-              background: '#183366',
-              height: '100vh',
-              color: '#fff',
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'space-between',
-              transition: 'width 0.3s',
-              position: 'relative',
-              overflow: 'hidden'
-            }
+            width: expandido ? '280px' : '60px',
+            background: '#183366',
+            height: '100vh',
+            color: '#fff',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+            transition: 'width 0.3s',
+            position: 'relative',
+            overflow: 'hidden'
+          }
       }
     >
       <div

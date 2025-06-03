@@ -81,7 +81,6 @@ const Message = () => {
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 600);
   const textareaRef = useRef(null);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-
   const [selectedFile, setSelectedFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const fileInputRef = useRef(null);
@@ -91,18 +90,30 @@ const Message = () => {
   const [replyTo, setReplyTo] = useState(null);
   const [replyLeaving, setReplyLeaving] = useState(false);
   const touchStartX = useRef(0);
-  const [fileAnim, setFileAnim] = useState(false);
   const emojiPickerRef = useRef(null);
   const emojiButtonRef = useRef(null);
-  const [fileLeaving, setFileLeaving] = useState(false);
   const [forwardModalOpen, setForwardModalOpen] = useState(false);
   const [forwardMsg, setForwardMsg] = useState(null);
   const [selectedForwardUser, setSelectedForwardUser] = useState(null);
   const [actionMenuIdx, setActionMenuIdx] = useState(null);
   const menuRef = useRef();
   const [longPressTimer, setLongPressTimer] = useState(null);
+  const [reactionMenuIdx, setReactionMenuIdx] = useState(null);
+  const reactionEmojiPickerRef = useRef(null);
 
-  // Limpieza: No hay variables sin uso. Todas las variables están siendo utilizadas en el componente.
+  useEffect(() => {
+    if (reactionMenuIdx === null) return;
+    function handleClickOutside(e) {
+      if (
+        reactionEmojiPickerRef.current &&
+        !reactionEmojiPickerRef.current.contains(e.target)
+      ) {
+        setReactionMenuIdx(null);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [reactionMenuIdx]);
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -154,28 +165,6 @@ const Message = () => {
     setSelectedForwardUser(null);
   };
 
-  useEffect(() => {
-    if (selectedFile && !imagePreview) {
-      setFileAnim(true);
-      setTimeout(() => setFileAnim(false), 300);
-    }
-  }, [selectedFile, imagePreview]);
-
-  useEffect(() => {
-    if (!showEmojiPicker) return;
-    const handleClickOutside = (e) => {
-      if (
-        emojiPickerRef.current &&
-        !emojiPickerRef.current.contains(e.target) &&
-        !emojiButtonRef.current.contains(e.target)
-      ) {
-        setShowEmojiPicker(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [showEmojiPicker]);
-
   const handleClipClick = () => {
     fileInputRef.current.click();
   };
@@ -218,10 +207,8 @@ const Message = () => {
     sendMessage(finalImage);
   };
 
-  // Scroll al mensaje original al hacer click en el reply
   const handleReplyClick = (replyMsg) => {
     if (!replyMsg) return;
-    // Busca el índice del mensaje original
     const idx = messages.findIndex(
       m =>
         m.from === replyMsg.from &&
@@ -423,12 +410,11 @@ const Message = () => {
             >
               <div
                 className={`chat-bubble${msg.from === 'Yo' ? ' me' : ''}`}
-                // SOLO EN MÓVIL: long press para abrir menú
                 onTouchStart={isMobile ? (e) => {
                   touchStartX.current = e.touches[0].clientX;
                   const timer = setTimeout(() => {
                     setActionMenuIdx(idx);
-                  }, 2000); // 2 segundos
+                  }, 2000);
                   setLongPressTimer(timer);
                 } : undefined}
                 onTouchEnd={isMobile ? (e) => {
@@ -439,6 +425,66 @@ const Message = () => {
                   }
                 } : undefined}
               >
+                {reactionMenuIdx === idx && (
+                  <div
+                    ref={reactionEmojiPickerRef}
+                    style={{
+                      position: 'absolute',
+                      bottom: -250,
+                      top: '100%',
+                      left: msg.from === 'Yo' ? 'auto' : '100%',
+                      right: msg.from === 'Yo' ? '100%' : 'auto',
+                      zIndex: 20,
+                      width: 300,
+                      minWidth: 0,
+                      boxShadow: '0 2px 12px #0002',
+                      borderRadius: 12,
+                      overflow: 'hidden',
+                      marginTop: 8,
+                      marginLeft: msg.from === 'Yo' ? 0 : 8,
+                      marginRight: msg.from === 'Yo' ? 8 : 0,
+                    }}
+                  >
+                    <Picker
+                      data={data}
+                      onEmojiSelect={emoji => {
+                        const newMessages = [...messages];
+                        newMessages[idx] = { ...newMessages[idx], reaction: emoji.native };
+                        setMessages(newMessages);
+                        setReactionMenuIdx(null);
+                      }}
+                      theme="light"
+                      previewPosition="none"
+                      searchPosition="none"
+                      navPosition="top"
+                      style={{ width: 300, minWidth: 0 }}
+                    />
+                  </div>
+                )}
+
+                {msg.reaction && (
+                  <span
+                    className="bubble-reaction"
+                    style={{
+                      position: 'absolute',
+                      bottom: -10,
+                      right: msg.from === 'Yo' ? 'auto' : -25,
+                      left: msg.from === 'Yo' ? -25 : 'auto',
+                      fontSize: 15,
+                      background: '#fff',
+                      borderRadius: 16,
+                      boxShadow: '0 2px 8px #0002',
+                      padding: '2px 8px',
+                      zIndex: 10,
+                      userSelect: 'none',
+                      transform: 'translateY(10%)',
+                      border: '2px solid #eee'
+                    }}
+                  >
+                    {msg.reaction}
+                  </span>
+                )}
+
                 {msg.forwarded && (
                   <div className="forwarded-label">
                     <FaShare style={{ transform: 'scaleX(-1)', marginRight: 4, fontSize: 13, verticalAlign: 'middle' }} />
@@ -462,7 +508,6 @@ const Message = () => {
                     dangerouslySetInnerHTML={{ __html: replaceFlagsWithImages(msg.text) }}
                     style={{ flex: 1 }}
                   />
-                  {/* Botón ⋮ solo en desktop */}
                   {!isMobile && (
                     <button
                       className={`bubble-menu-btn${actionMenuIdx === idx ? ' active' : ''}`}
@@ -478,7 +523,6 @@ const Message = () => {
                   )}
                 </div>
                 <div className="chat-bubble-time">{msg.time}</div>
-                {/* Menú de acciones */}
                 {actionMenuIdx === idx && (
                   <div
                     className="bubble-action-menu"
@@ -500,7 +544,10 @@ const Message = () => {
                   >
                     <button className="bubble-action-item" onClick={() => { setReplyTo(msg); setActionMenuIdx(null); }}>Responder</button>
                     <button className="bubble-action-item" onClick={() => { handleForwardClick(msg); setActionMenuIdx(null); }}>Reenviar</button>
-                    <button className="bubble-action-item" onClick={() => { /* lógica de reacción */ setActionMenuIdx(null); }}>Reaccionar</button>
+                    <button className="bubble-action-item" onClick={() => {
+                      setActionMenuIdx(null);
+                      setTimeout(() => setReactionMenuIdx(idx), 100);
+                    }}>Reaccionar</button>
                   </div>
                 )}
 
@@ -681,7 +728,6 @@ const Message = () => {
         )}
         {selectedFile && !imagePreview && (
           <div
-            className={`file-preview-animate${fileAnim ? ' file-preview-animate-enter' : ''}${fileLeaving ? ' file-preview-animate-leave' : ''}`}
             style={{
               display: 'flex',
               alignItems: 'center',
@@ -710,12 +756,8 @@ const Message = () => {
             <button
               type="button"
               onClick={() => {
-                setFileLeaving(true);
-                setTimeout(() => {
-                  setSelectedFile(null);
-                  setFileLeaving(false);
-                  if (fileInputRef.current) fileInputRef.current.value = '';
-                }, 300);
+                setSelectedFile(null);
+                if (fileInputRef.current) fileInputRef.current.value = '';
               }}
               style={{
                 background: 'none',

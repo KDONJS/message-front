@@ -1,0 +1,28 @@
+.dashboard-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.dashboard-animate {
+  animation: dashboardFadeIn 0.7s cubic-bezier(.23,1.01,.32,1) both;
+}
+
+@keyframes dashboardFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(60px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dashboard-card {
+  transition: transform 0.22s cubic-bezier(.23,1.01,.32,1), box-shadow 0.22s;
+  will-change: transform;
+}
+.dashboard-card:hover {
+  transform: translateY(-8px) scale(1.03);
+  box-shadow: 0 8px 32px #0002;
+  z-index: 2;
+}
