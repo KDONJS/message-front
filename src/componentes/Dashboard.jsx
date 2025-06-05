@@ -2,10 +2,7 @@ import React from 'react';
 import Card from '../ui/card';
 import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
 import './css/dashboard.css';
-
-function formatNumber(num) {
-  return num.toLocaleString('es-PE');
-}
+import AnimatedNumber from './AnimatedNumber';
 
 const Dashboard = () => {
   const tickets = 12042;
@@ -55,8 +52,8 @@ const Dashboard = () => {
       className="dashboard-scroll dashboard-animate"
     >
       <h1 style={{ fontWeight: 700, color: '#444', marginBottom: 32 }}>Bienvenido @User</h1>
-      <div style={{ display: 'flex', gap: 24, marginBottom: 24 }}>
-        <Card style={{ flex: 1, textAlign: 'center' }}>
+      <div className="dashboard-top">
+        <Card style={{ textAlign: 'center' }}>
           <div style={{ fontSize: 14, color: '#888', marginBottom: 8 }}>Sales Pipeline</div>
           <div style={{ width: '100%', height: 180 }}>
             <ResponsiveContainer width="100%" height="100%">
@@ -77,9 +74,11 @@ const Dashboard = () => {
             </ResponsiveContainer>
           </div>
         </Card>
-        <Card style={{ flex: 2, minHeight: 260, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+        <Card style={{ textAlign: 'center' }}>
           <div style={{ fontSize: 14, color: '#888', marginBottom: 8 }}>Monthly Goal</div>
-          <div style={{ fontWeight: 700, fontSize: 28, marginBottom: 16 }}>{formatNumber(monthlyGoal)}</div>
+          <div style={{ fontWeight: 700, fontSize: 28, marginBottom: 16 }}>
+            <AnimatedNumber value={monthlyGoal} />
+          </div>
           <div style={{ width: '100%', height: 18, background: '#e0e0e0', borderRadius: 8 }}>
             <div
               style={{
@@ -93,26 +92,36 @@ const Dashboard = () => {
           </div>
         </Card>
       </div>
-      <div style={{ display: 'flex', gap: 24, marginBottom: 24 }}>
+      <div className="dashboard-cards">
         <Card style={{ flex: 1, textAlign: 'center' }}>
           <div style={{ fontSize: 13, color: '#888', marginBottom: 8 }}>Tickets Soporte</div>
-          <div style={{ fontWeight: 700, fontSize: 22 }}>{formatNumber(tickets)}</div>
+          <div style={{ fontWeight: 700, fontSize: 22 }}>
+            <AnimatedNumber value={tickets} />
+          </div>
         </Card>
         <Card style={{ flex: 1, textAlign: 'center' }}>
           <div style={{ fontSize: 13, color: '#888', marginBottom: 8 }}>Incidencias</div>
-          <div style={{ fontWeight: 700, fontSize: 22 }}>{formatNumber(incidencias)}</div>
+          <div style={{ fontWeight: 700, fontSize: 22 }}>
+            <AnimatedNumber value={incidencias} />
+          </div>
         </Card>
         <Card style={{ flex: 1, textAlign: 'center' }}>
           <div style={{ fontSize: 13, color: '#888', marginBottom: 8 }}>Usuarios Activos</div>
-          <div style={{ fontWeight: 700, fontSize: 22 }}>{formatNumber(usuarios)}</div>
+          <div style={{ fontWeight: 700, fontSize: 22 }}>
+            <AnimatedNumber value={usuarios} />
+          </div>
         </Card>
         <Card style={{ flex: 1, textAlign: 'center' }}>
           <div style={{ fontSize: 13, color: '#888', marginBottom: 8 }}>Mensajes entrantes</div>
-          <div style={{ fontWeight: 700, fontSize: 22 }}>{formatNumber(mensajes)}</div>
+          <div style={{ fontWeight: 700, fontSize: 22 }}>
+            <AnimatedNumber value={mensajes} />
+          </div>
         </Card>
         <Card style={{ flex: 1, textAlign: 'center' }}>
           <div style={{ fontSize: 13, color: '#888', marginBottom: 8 }}>Average Value of Won Deals</div>
-          <div style={{ fontWeight: 700, fontSize: 22 }}>{formatNumber(average)}</div>
+          <div style={{ fontWeight: 700, fontSize: 22 }}>
+            <AnimatedNumber value={average} />
+          </div>
         </Card>
       </div>
       <Card style={{ minHeight: 140 }}>

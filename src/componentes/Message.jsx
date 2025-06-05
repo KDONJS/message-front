@@ -131,6 +131,24 @@ const Message = () => {
     };
   }, [actionMenuIdx]);
 
+  // Cierra el emoji picker al hacer clic fuera o interactuar
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (
+        showEmojiPicker &&
+        emojiPickerRef.current &&
+        !emojiPickerRef.current.contains(e.target) &&
+        emojiButtonRef.current &&
+        !emojiButtonRef.current.contains(e.target)
+      ) {
+        setShowEmojiPicker(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [showEmojiPicker]);
+
   useEffect(() => {
     setMessages(selectedUser.messages);
   }, [selectedUser]);
@@ -170,6 +188,7 @@ const Message = () => {
   };
 
   const handleFileChange = (e) => {
+    setShowEmojiPicker(false);
     const file = e.target.files[0];
     setSelectedFile(file);
     setImagePreview(null);
@@ -183,6 +202,9 @@ const Message = () => {
   const messageRefs = useRef({});
 
   const handleSend = (e) => {
+    e.preventDefault();
+    if (input.trim() === '' && !selectedFile) return;
+    setShowEmojiPicker(false);
     e.preventDefault();
     if (input.trim() === '' && !selectedFile) return;
 
@@ -406,7 +428,11 @@ const Message = () => {
               className={`bubble-hover-area${msg.from === 'Yo' ? ' me' : ''}`}
               key={idx}
               ref={el => (messageRefs.current[idx] = el)}
-              style={{ position: 'relative' }}
+              style={{ 
+                position: 'relative'
+                
+               
+              }}
             >
               <div
                 className={`chat-bubble${msg.from === 'Yo' ? ' me' : ''}`}
@@ -440,7 +466,7 @@ const Message = () => {
                       boxShadow: '0 2px 12px #0002',
                       borderRadius: 12,
                       overflow: 'hidden',
-                      marginTop: 8,
+                      marginTop: -64,
                       marginLeft: msg.from === 'Yo' ? 0 : 8,
                       marginRight: msg.from === 'Yo' ? 8 : 0,
                     }}

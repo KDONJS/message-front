@@ -20,9 +20,65 @@
 .dashboard-card {
   transition: transform 0.22s cubic-bezier(.23,1.01,.32,1), box-shadow 0.22s;
   will-change: transform;
+  min-width: 0;
 }
 .dashboard-card:hover {
   transform: translateY(-8px) scale(1.03);
   box-shadow: 0 8px 32px #0002;
   z-index: 2;
+}
+
+.dashboard-cards {
+  display: grid;
+  gap: 16px;
+  margin-bottom: 24px;
+  grid-template-columns: repeat(5, 1fr);
+}
+.dashboard-top {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+
+
+@media (max-width: 900px) {
+  .dashboard-top {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
+
+@media (max-width: 600px) {
+  .dashboard-cards {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+}
+
+.dashboard-pie-row {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+
+@media (min-width: 600px) {
+  .dashboard-pie-row {
+    flex-direction: row;
+    gap: 24px;
+  }
+}
+
+@media (max-width: 600px) {
+  .dashboard-cards {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+  .dashboard-cards .dashboard-card:last-child {
+    grid-column: 1 / span 2;
+    justify-self: center;
+  }
 }
