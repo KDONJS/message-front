@@ -5,6 +5,27 @@ import fondo from '../assets/hero1.webp';
 const Register = ({ onLogin }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    if (password !== confirmPassword) {
+      setErrorMessage("Las contraseñas no coinciden.");
+      return;
+    }
+    setErrorMessage("");
+    console.log({
+      firstName,
+      lastName,
+      email,
+      password,
+    });
+  };
+
   // Agrega más campos según tu necesidad
 
   return (
@@ -15,7 +36,21 @@ const Register = ({ onLogin }) => {
         </div>
         <h2 className="login-title">¡REGÍSTRATE!</h2>
         <p className="login-subtitle">Crea tu cuenta para continuar.</p>
-        <form className="login-form">
+        <form className="login-form" onSubmit={handleSubmit}>
+          <input 
+            type="text"
+            placeholder="Nombres"
+            value={firstName}
+            onChange={e => setFirstName(e.target.value)}
+            className="login-input"
+          />
+          <input
+            type="text"
+            placeholder="Apellidos"
+            value={lastName}
+            onChange={e => setLastName(e.target.value)}
+            className="login-input"
+          />
           <input
             type="email"
             placeholder="Correo electrónico"
@@ -30,8 +65,22 @@ const Register = ({ onLogin }) => {
             onChange={e => setPassword(e.target.value)}
             className="login-input"
           />
+          <input
+            type="password-confirm"
+            placeholder="Confirmar contraseña"
+            value={confirmPassword}
+            onChange={e => setConfirmPassword(e.target.value)}
+            className="login-input"
+          />
+
           {/* Agrega más inputs aquí */}
-          <button type="submit" className="login-btn">REGISTRARME</button>
+          {errorMessage && <p className="error-message">{errorMessage}</p>}
+          <button
+            type="submit"
+            className="login-btn"
+            disabled={!email || !password || !confirmPassword || password !== confirmPassword}>
+            REGISTRARME
+          </button>
         </form>
         <div className="login-register">
           ¿Ya tienes cuenta? <span className="login-link-register" onClick={onLogin}>Inicia sesión</span>

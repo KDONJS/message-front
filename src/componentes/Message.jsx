@@ -284,6 +284,43 @@ const Message = () => {
     }, 350);
   };
 
+  const renderEmojiPicker = (idx, msg) => (
+  <div
+    ref={reactionEmojiPickerRef}
+    style={{
+      position: 'absolute',
+      bottom: -250,
+      top: '100%',
+      left: msg.from === 'Yo' ? 'auto' : '100%',
+      right: msg.from === 'Yo' ? '100%' : 'auto',
+      zIndex: 20,
+      width: 300,
+      minWidth: 0,
+      boxShadow: '0 2px 12px #0002',
+      borderRadius: 12,
+      overflow: 'hidden',
+      marginTop: -64,
+      marginLeft: msg.from === 'Yo' ? 0 : 8,
+      marginRight: msg.from === 'Yo' ? 8 : 0,
+    }}
+  >
+    <Picker
+      data={data}
+      onEmojiSelect={(emoji) => {
+        const newMessages = [...messages];
+        newMessages[idx] = { ...newMessages[idx], reaction: emoji.native };
+        setMessages(newMessages);
+        setReactionMenuIdx(null);
+      }}
+      theme="light"
+      previewPosition="none"
+      searchPosition="none"
+      navPosition="top"
+      style={{ width: 300, minWidth: 0 }}
+    />
+  </div>
+);
+
   useEffect(() => {
     if (!drawingMode) return;
     const canvas = document.getElementById('draw-canvas');
@@ -428,11 +465,6 @@ const Message = () => {
               className={`bubble-hover-area${msg.from === 'Yo' ? ' me' : ''}`}
               key={idx}
               ref={el => (messageRefs.current[idx] = el)}
-              style={{ 
-                position: 'relative'
-                
-               
-              }}
             >
               <div
                 className={`chat-bubble${msg.from === 'Yo' ? ' me' : ''}`}
@@ -450,46 +482,20 @@ const Message = () => {
                     setReplyTo(msg);
                   }
                 } : undefined}
-              >
-                {reactionMenuIdx === idx && (
-                  <div
-                    ref={reactionEmojiPickerRef}
-                    style={{
-                      position: 'absolute',
-                      bottom: -250,
-                      top: '100%',
-                      left: msg.from === 'Yo' ? 'auto' : '100%',
-                      right: msg.from === 'Yo' ? '100%' : 'auto',
-                      zIndex: 20,
-                      width: 300,
-                      minWidth: 0,
-                      boxShadow: '0 2px 12px #0002',
-                      borderRadius: 12,
-                      overflow: 'hidden',
-                      marginTop: -64,
-                      marginLeft: msg.from === 'Yo' ? 0 : 8,
-                      marginRight: msg.from === 'Yo' ? 8 : 0,
-                    }}
-                  >
-                    <Picker
-                      data={data}
-                      onEmojiSelect={emoji => {
-                        const newMessages = [...messages];
-                        newMessages[idx] = { ...newMessages[idx], reaction: emoji.native };
-                        setMessages(newMessages);
-                        setReactionMenuIdx(null);
-                      }}
-                      theme="light"
-                      previewPosition="none"
-                      searchPosition="none"
-                      navPosition="top"
-                      style={{ width: 300, minWidth: 0 }}
-                    />
-                  </div>
-                )}
 
-                {msg.reaction && (
-                  <span
+                style={{ 
+                zIndex: 1,
+              }}
+                
+              >
+                {reactionMenuIdx === idx && renderEmojiPicker(idx, msg)}
+
+                {isMobile && msg.reaction && (
+                  <button
+                    onClick={() => {
+                      setActionMenuIdx(null);
+                      setTimeout(() => setReactionMenuIdx(idx), 100);
+                    }}
                     className="bubble-reaction"
                     style={{
                       position: 'absolute',
@@ -508,7 +514,7 @@ const Message = () => {
                     }}
                   >
                     {msg.reaction}
-                  </span>
+                  </button>
                 )}
 
                 {msg.forwarded && (
@@ -524,7 +530,7 @@ const Message = () => {
                     style={{ cursor: 'pointer' }}
                     onClick={() => handleReplyClick(msg.replyTo)}
                   >
-                    <span className="reply-from">{msg.replyTo.from}:</span>
+                    <span className="reply-from">{msg.replyTo.from}: </span>
                     <span className="reply-text">{msg.replyTo.text}</span>
                   </div>
                 )}
