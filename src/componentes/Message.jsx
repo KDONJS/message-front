@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Sidebar from './Sidebar';
 import { sidebarIcons } from './SidebarIcons';
-import Picker from '@emoji-mart/react';
+import EmojiPicker from './EmojiPicker';
 import data from '@emoji-mart/data';
 import { FaFilePdf, FaFileWord, FaFileExcel, FaFilePowerpoint, FaFileImage, FaFileAlt, FaFileArchive, FaFile } from "react-icons/fa";
 import emojiFlags from 'emoji-flags';
@@ -304,7 +304,7 @@ const Message = () => {
       marginRight: msg.from === 'Yo' ? 8 : 0,
     }}
   >
-    <Picker
+    <EmojiPicker
       data={data}
       onEmojiSelect={(emoji) => {
         const newMessages = [...messages];
@@ -886,7 +886,7 @@ const Message = () => {
                   zIndex: 10
                 }}
               >
-                <Picker
+                <EmojiPicker
                   data={data}
                   onEmojiSelect={handleEmojiSelect}
                   theme="light"

@@ -1,4 +1,3 @@
-import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import Sidebar from './componentes/Sidebar';
 import Dashboard from './componentes/Dashboard';
 import Message from './componentes/Message';
@@ -11,7 +10,7 @@ import Login from './componentes/Login';
 import Register from './componentes/Register';
 import { useState, useEffect } from 'react';
 import { sidebarIcons } from './componentes/SidebarIcons';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate, Routes, Route, Navigate } from 'react-router-dom';
 
 
 // Elimina el import de BrowserRouter y NO uses <Router> aquí
@@ -63,14 +62,29 @@ const BottomBar = () => {
 
 const App = () => {
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 600);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(() => {
+    // Verificar si hay una sesión guardada en localStorage
+    return localStorage.getItem('isLoggedIn') === 'true';
+  });
   const [showRegister, setShowRegister] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   console.log('App location:', location);
   console.log('App backgroundLocation:', location.state?.backgroundLocation);
 
+  // Función para manejar el login
+  const handleLogin = () => {
+    setIsLoggedIn(true);
+    localStorage.setItem('isLoggedIn', 'true');
+    navigate('/dashboard');
+  };
 
+  // Función para manejar el logout
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    localStorage.removeItem('isLoggedIn');
+    navigate('/');
+  };
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 600);
@@ -84,10 +98,7 @@ const App = () => {
     ) : (
       <Login
         onRegister={() => setShowRegister(true)}
-        onLoginSuccess={() => {
-          setIsLoggedIn(true);
-          navigate('/dashboard'); // Redirige al dashboard tras login
-        }}
+        onLoginSuccess={handleLogin}
       />
     );
   }
@@ -108,7 +119,7 @@ const App = () => {
        
       </Routes>
       {location.pathname === "/logout" && (
-        <Logout onLogout={() => setIsLoggedIn(false)} />
+        <Logout onLogout={handleLogout} />
       )}
       {isMobile && <BottomBar />}
     </div>
