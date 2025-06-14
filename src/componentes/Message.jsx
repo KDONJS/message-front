@@ -490,7 +490,36 @@ const Message = () => {
               >
                 {reactionMenuIdx === idx && renderEmojiPicker(idx, msg)}
 
+                {/* Reacciones para móvil */}
                 {isMobile && msg.reaction && (
+                  <button
+                    onClick={() => {
+                      setActionMenuIdx(null);
+                      setTimeout(() => setReactionMenuIdx(idx), 100);
+                    }}
+                    className="bubble-reaction"
+                    style={{
+                      position: 'absolute',
+                      bottom: -10,
+                      right: msg.from === 'Yo' ? 'auto' : -25,
+                      left: msg.from === 'Yo' ? -25 : 'auto',
+                      fontSize: 15,
+                      background: '#fff',
+                      borderRadius: 16,
+                      boxShadow: '0 2px 8px #0002',
+                      padding: '2px 8px',
+                      zIndex: 10,
+                      userSelect: 'none',
+                      transform: 'translateY(10%)',
+                      border: '2px solid #eee'
+                    }}
+                  >
+                    {msg.reaction}
+                  </button>
+                )}
+
+                {/* Reacciones para desktop */}
+                {!isMobile && msg.reaction && (
                   <button
                     onClick={() => {
                       setActionMenuIdx(null);
