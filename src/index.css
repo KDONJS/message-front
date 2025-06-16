@@ -287,14 +287,14 @@ body, .msg-input, .chat-bubble-text {
 .sidebar {
   width: 320px;
   min-width: 220px;
-  background: linear-gradient(180deg, #2952a3 0%, #3a5db7 100%);
+  background: #fff;
   display: flex;
   flex-direction: column;
   padding-bottom: 16px;
 }
 
 .sidebar-title {
-  color: #fff;
+  color: #001233;
   font-size: 32px;
   font-weight: 500;
   padding: 24px 0 16px 24px;
@@ -311,14 +311,14 @@ body, .msg-input, .chat-bubble-text {
   display: flex;
   align-items: center;
   width: 100%;
-  background: #7fa6e6;
+  background: #dddddd;
   border-radius: 24px;
   padding: 0 12px;
   height: 40px;
 }
 
 .sidebar-search-icon {
-  color: #fff;
+  color: #001233;
   font-size: 20px;
   margin-right: 8px;
   opacity: 0.8;
@@ -329,7 +329,7 @@ body, .msg-input, .chat-bubble-text {
   border: none;
   outline: none;
   background: transparent;
-  color: #ffffff !important;
+  color: #001233 !important;
   font-size: 17px;
   padding: 8px 0;
   border-radius: 24px;
@@ -345,9 +345,9 @@ body, .msg-input, .chat-bubble-text {
 .sidebar-user {
   padding: 16px 32px;
   background: transparent;
-  color: #fff;
+  color: #001233;
   cursor: pointer;
-  border-radius: 24px;
+  border-radius: 15px;
   margin: 0 16px 8px 16px;
   font-weight: normal;
   display: flex;
@@ -356,8 +356,8 @@ body, .msg-input, .chat-bubble-text {
 }
 
 .sidebar-user.selected {
-  background: #fff;
-  color: #183366;
+  background: #33a29a;
+  color: #fff;
   font-weight: bold;
 }
 
@@ -392,6 +392,7 @@ body, .msg-input, .chat-bubble-text {
   max-height: 56px;
   background: #e5e5e5;
   border-bottom: 1px solid #ddd;
+  color: #001233;
   display: flex;
   align-items: center;
   font-weight: bold;

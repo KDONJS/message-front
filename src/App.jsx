@@ -9,6 +9,7 @@ import Settings from './componentes/Settings';
 import Logout from './componentes/Logout';
 import Login from './componentes/Login';
 import Register from './componentes/Register';
+import Task from './componentes/Task'; // Ajusta la ruta si está en otra carpeta
 import { useState, useEffect } from 'react';
 import { sidebarIcons } from './componentes/SidebarIcons';
 import { useLocation } from 'react-router-dom';
@@ -22,8 +23,10 @@ const navButtons = [
   { icon: <sidebarIcons.reportes />, label: "Reportes", to: "/reportes" },
   { icon: <sidebarIcons.roles />, label: "Roles", to: "/roles" },
   { icon: <sidebarIcons.usuarios />, label: "Usuarios", to: "/usuarios" },
-  { icon: <sidebarIcons.configuracion />, label: "Configuración", to: "/configuracion" }, // <-- Añade este
-  { icon: <sidebarIcons.logout />, label: "Cerrar sesión", to: "/logout" } // <-- Y este
+  { icon: <sidebarIcons.task />, label: "Tareas", to: "/tareas" },
+  { icon: <sidebarIcons.configuracion />, label: "Configuración", to: "/configuracion" }, 
+  { icon: <sidebarIcons.logout />, label: "Cerrar sesión", to: "/logout" }, // <-- Y este
+  
 ];
 
 const BottomBar = () => {
@@ -112,7 +115,9 @@ const App = () => {
         <Route path="/reportes" element={<Reports />} />
         <Route path="/roles" element={<Roles />} />
         <Route path="/usuarios" element={<Users />} />
+        <Route path="/tareas" element={<Task />} />
         <Route path="/configuracion" element={<Settings />} />
+        
         {/* Fallback: si no hay backgroundLocation y la ruta es /logout, muestra Dashboard */}
        
       </Routes>

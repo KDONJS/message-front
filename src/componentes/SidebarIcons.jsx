@@ -13,7 +13,8 @@ import {
   Paperclip,
   Smile,
   CornerDownRight,
-  CornerDownLeft
+  CornerDownLeft,
+  LayoutPanelLeft
 } from 'lucide-react';
 
 export const sidebarIcons = {
@@ -31,5 +32,6 @@ export const sidebarIcons = {
   clip: Paperclip,
   emoji: Smile,
   responder: CornerDownRight,
-  MeResponer: CornerDownLeft
+  MeResponer: CornerDownLeft,
+  task: LayoutPanelLeft
 };

@@ -9,11 +9,11 @@ const SidebarButton = forwardRef(({ icon, label, to, onClick, expandido, isActiv
         onClick={onClick}
         style={{
           display: 'flex',
-          alignItems: 'center',
+          
           justifyContent: expandido ? 'flex-start' : 'center',
-          padding: expandido ? '12px 20px' : '12px 0',
+          padding: expandido ? '12px 0px 12px 20px' : '12px 0',
           background: 'transparent',
-          color: '#fff',
+          color: '#001233',
           border: 'none',
           borderRadius: expandido ? '24px' : '50%',
           width: !expandido ? '40px' : 'auto',
@@ -63,7 +63,7 @@ const SidebarButton = forwardRef(({ icon, label, to, onClick, expandido, isActiv
         margin: '8px 12px',
         fontWeight: isActive ? 'bold' : 'normal',
         cursor: 'pointer',
-        color: isActive ? '#183366' : '#fff',
+        color: isActive ? '#001D3D' : '#fff',
         background: 'transparent',
         borderRadius: expandido ? '24px' : '16px',
         zIndex: 2,
@@ -78,7 +78,7 @@ const SidebarButton = forwardRef(({ icon, label, to, onClick, expandido, isActiv
             justifyContent: 'center',
             width: '40px',
             height: '40px',
-            color: isActive ? '#183366' : '#fff',
+            color: isActive ? '#fff' : '#001233',
             transition: 'color 0.2s'
           }}
         >
@@ -88,7 +88,7 @@ const SidebarButton = forwardRef(({ icon, label, to, onClick, expandido, isActiv
           <span
             style={{
               marginLeft: '12px',
-              color: isActive ? '#183366' : '#fff',
+              color: isActive ? '#fff' : '#001233',
               transition: 'color 0.2s'
             }}
           >

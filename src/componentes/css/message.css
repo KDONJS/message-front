@@ -6,7 +6,7 @@
   flex: 1 1 auto;
   min-height: 0;
   flex-direction: column;
-  background: #6b768f !important;
+  background: #dddddd !important;
   gap: 10px;
   margin: 0;
   padding: 16px;
@@ -118,7 +118,7 @@
 
 .chat-bubble.me {
   align-self: flex-end;
-  background: linear-gradient(135deg, #2952a3 0%, #3a5db7 100%);
+  background: #33a29a;
   color: white;
   margin-right: 16px;
   margin-left: 0;
@@ -205,7 +205,7 @@
   justify-content: center;
   border-radius: 20px;
   padding: 8px 24px;
-  background: #183366;
+  background: #33a29a;
   color: #fff;
   border: none;
   cursor: pointer;
@@ -406,6 +406,7 @@
   align-items: center;
   font-weight: bold;
   font-size: 18px;
+  color: #001D3D;
 }
 
 .forward-modal-search {
@@ -429,6 +430,7 @@
   border-radius: 6px;
   cursor: pointer;
   transition: background 0.2s;
+  color: #001D3D;
 }
 
 .forward-user.selected,
@@ -443,7 +445,7 @@
 }
 
 .forward-modal-send {
-  background: #1976d2;
+  background: #33a29a;
   color: #fff;
   border: none;
   border-radius: 6px;
@@ -515,14 +517,14 @@
   padding: 10px 20px;
   cursor: pointer;
   font-size: 15px;
-  color: #222;
+  color: #001D3D;
   transition: background 0.2s, color 0.2s;
   border-radius: 6px;
 }
 
 .bubble-action-item:hover {
-  background: #e3f2fd;
-  color: #1976d2;
+  background: #e1fdff;
+  color: #007d86;
 }
 
 .chat-bubble.me .bubble-menu-btn {

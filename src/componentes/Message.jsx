@@ -815,7 +815,17 @@ const Message = () => {
             <div className="forward-modal-content">
               <div className="forward-modal-header">
                 <span>Reenviar mensaje a</span>
-                <button onClick={() => setForwardModalOpen(false)}>✕</button>
+                <button onClick={() => setForwardModalOpen(false)}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    color: '#001D3D',
+                    fontSize: '18px',
+                    cursor: 'pointer',
+                    marginLeft: '4px',
+                    padding: 0,
+                    lineHeight: 1
+                  }}>✕</button>
               </div>
               <input
                 type="text"

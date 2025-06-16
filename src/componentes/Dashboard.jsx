@@ -10,22 +10,22 @@ const Dashboard = () => {
   const usuarios = 12042;
   const mensajes = 12042;
   const average = 12042;
-  const monthlyGoal = 3000;
+  const monthlyGoal = 19000;
   const monthlyGoalMax = 20000;
 
   const pieData = [
-    { name: 'Ganados', value: 7000 },
-    { name: 'En Proceso', value: 8000 },
-    { name: 'Terceros', value: 5000 },
+    { name: 'Ganados', value: 70 },
+    { name: 'En Proceso', value: 80 },
+    { name: 'Terceros', value: 90 },
   ];
 
-  const COLORS = ['#FF914D', '#5C6BC0', '#66BB6A'];
+  const COLORS = ['#ffdd00', '#c9a227', '#a47e1b'];
 
   const progress = Math.min((monthlyGoal / monthlyGoalMax) * 100, 100);
 
   const getBarColor = (progress) => {
-    if (progress <= 15) return '#e53935';
-    if (progress >= 95) return '#4caf50';
+    if (progress <= 15) return '#a63c06';
+    if (progress >= 95) return '#33a29a';
     return '#bbb';
   };
 
@@ -41,7 +41,7 @@ const Dashboard = () => {
     <div
       style={{
         padding: 32,
-        background: '#f8f9fa',
+        background: '#dddddd',
         minHeight: '100vh',
         height: '100vh',
         overflowY: 'auto',
@@ -51,7 +51,7 @@ const Dashboard = () => {
       }}
       className="dashboard-scroll dashboard-animate"
     >
-      <h1 style={{ fontWeight: 700, color: '#444', marginBottom: 32 }}>Bienvenido @User</h1>
+      <h1 style={{ fontWeight: 700, color: '#001233', marginBottom: 32 }}>Bienvenido @User</h1>
       <div className="dashboard-top">
         <Card style={{ textAlign: 'center' }}>
           <div style={{ fontSize: 14, color: '#888', marginBottom: 8 }}>Sales Pipeline</div>

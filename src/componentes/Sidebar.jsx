@@ -11,8 +11,10 @@ const navButtons = [
   { icon: <sidebarIcons.reportes />, label: "Reportes", to: "/reportes" },
   { icon: <sidebarIcons.roles />, label: "Roles", to: "/roles" },
   { icon: <sidebarIcons.usuarios />, label: "Usuarios", to: "/usuarios" },
+  { icon: <sidebarIcons.task />, label: "Tareas", to: "/tareas" },
   { icon: <sidebarIcons.configuracion />, label: "Configuración", to: "/configuracion" },
-  { icon: <sidebarIcons.logout />, label: "Cerrar sesión", to: "/logout" }
+  { icon: <sidebarIcons.logout />, label: "Cerrar sesión", to: "/logout" },
+   // <-- Asegúrate de tener el ícono
 ];
 
 const Sidebar = ({ className = "", onMensajesClick }) => {
@@ -28,7 +30,7 @@ const Sidebar = ({ className = "", onMensajesClick }) => {
 
   // refs para cada botón
   const buttonRefs = useRef([]);
-  const [highlightStyle, setHighlightStyle] = useState({ top: 0, left: 0, width: 0, height: 0 });
+  const [highlightStyle, setHighlightStyle] = useState({ top: 0, left: 10, width: 0, height: 0 });
 
   // Recalcula el highlight cuando cambia el tamaño de la ventana o el botón activo
   useEffect(() => {
@@ -38,7 +40,7 @@ const Sidebar = ({ className = "", onMensajesClick }) => {
         const style = {
           top: el.offsetTop,
           left: el.offsetLeft,
-          width: el.offsetWidth,
+          width: el.offsetWidth ,
           height: el.offsetHeight
         };
         setHighlightStyle(style);
@@ -94,7 +96,7 @@ const Sidebar = ({ className = "", onMensajesClick }) => {
           ? undefined
           : {
             width: expandido ? '280px' : '60px',
-            background: '#183366',
+            background: '#fff',
             height: '100vh',
             color: '#fff',
             display: 'flex',
@@ -120,13 +122,17 @@ const Sidebar = ({ className = "", onMensajesClick }) => {
           <div
             style={{
               position: 'absolute',
-              top: highlightStyle.top,
-              width: expandido ? highlightStyle.width : highlightStyle.height,
-              height: highlightStyle.height,
-              background: '#fff',
-              borderRadius: expandido ? '24px' : '50%',
+              top: expandido ? highlightStyle.top - 6 : highlightStyle.top ,
+              width: expandido ? 200 : highlightStyle.height,
+              height: expandido ? 54 : highlightStyle.height,
+              left: expandido ? highlightStyle.left : 10,
+              transition: 'top 0.3s, left 0.3s, width 0.3s, height 0.3s',
+              pointerEvents: 'none',
+              background: '#33a29a',
+              borderRadius: expandido ? '10px' : '50%',
               zIndex: 1,
-              boxShadow: '0 2px 8px 0 rgba(0,0,0,0.07)'
+              boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.07)'
+
             }}
           />
         )}
