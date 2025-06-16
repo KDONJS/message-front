@@ -6,7 +6,8 @@ const Logout = ({ onLogout }) => {
   const [showConfirm, setShowConfirm] = useState(true);
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
+    localStorage.removeItem('authToken');
+    sessionStorage.removeItem('authToken');
     if (onLogout) onLogout(); // Cambia el estado en App.jsx
     navigate('/login');
   };

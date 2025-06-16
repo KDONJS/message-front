@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import teslanet from '../assets/teslanet.svg';
 import fondo from '../assets/hero1.webp';
 
@@ -8,13 +8,28 @@ const Login = ({ onRegister, onLoginSuccess }) => {
     const [remember, setRemember] = useState(false);
     const [error, setError] = useState("");
 
+    useEffect(() => {
+    const storedToken = localStorage.getItem("authToken") || sessionStorage.getItem("authToken");
+    if (storedToken) {
+        onLoginSuccess();
+    }
+}, [onLoginSuccess]);
+
+
     const handleSubmit = (e) => {
         e.preventDefault();
         if (email === "admin@admin" && password === "admin") {
             setError("");
+            const token = "sampleToken"; // Aquí podrías generar un token real
+
+            // Guardar token según el tipo de almacenamiento
+            if (remember) {
+                localStorage.setItem("authToken", token); // persiste entre sesiones
+            } else {
+                sessionStorage.setItem("authToken", token); // desaparece al cerrar navegador
+            }
+
             onLoginSuccess();
-        } else {
-            setError("Usuario o contraseña incorrectos");
         }
     };
 
@@ -29,6 +44,7 @@ const Login = ({ onRegister, onLoginSuccess }) => {
                     </div>
                     <h2 className="login-title">¡BIENVENIDO!</h2>
                     <p className="login-subtitle">Por favor, ingrese a su cuenta.</p>
+
                     <form className="login-form" onSubmit={handleSubmit}>
                         <input
                             type="email"

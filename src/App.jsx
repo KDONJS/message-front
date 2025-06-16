@@ -63,7 +63,10 @@ const BottomBar = () => {
 
 const App = () => {
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 600);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(() => {
+  return !!(localStorage.getItem("authToken") || sessionStorage.getItem("authToken"));
+});
+
   const [showRegister, setShowRegister] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
@@ -77,6 +80,12 @@ const App = () => {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  useEffect(() => {
+  const token = localStorage.getItem("authToken") || sessionStorage.getItem("authToken");
+  if (!token) setIsLoggedIn(false);
+}, []);
+
 
   if (!isLoggedIn) {
     return showRegister ? (
