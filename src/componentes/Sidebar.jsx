@@ -176,7 +176,7 @@ const Sidebar = ({ className = "", onMensajesClick }) => {
           />
         )}
         {/* Botones de navegación */}
-        {navButtons.slice(0, 5).map((btn, idx) => (
+        {navButtons.slice(0, 6).map((btn, idx) => (
           <SidebarButton
             key={btn.to}
             expandido={expandido}
@@ -188,16 +188,19 @@ const Sidebar = ({ className = "", onMensajesClick }) => {
             onClick={() => handleNavClick(btn.to)}
           />
         ))}
+
+         <div style={{ flexGrow: 0.89 }} />
+
         {/* Botones de navegación inferiores */}
-        {navButtons.slice(5).map((btn, idx) => (
+        {navButtons.slice(6).map((btn, idx) => (
           <SidebarButton
             key={btn.to}
             expandido={expandido}
             icon={btn.icon}
             label={expandido ? btn.label : ""}
             to={btn.to}
-            isActive={activeIndex === idx + 5}
-            ref={el => buttonRefs.current[idx + 5] = el}
+            isActive={activeIndex === idx + 6}
+            ref={el => buttonRefs.current[idx + 6] = el}
             onClick={() => handleNavClick(btn.to)}
           />
         ))}
