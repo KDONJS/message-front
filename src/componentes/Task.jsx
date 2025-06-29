@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./css/Task.css";
 import TaskFormModal from "../ui/TaskFormModal";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
@@ -6,15 +6,32 @@ import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 const generateId = () =>
   `task-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 
-const KanbanBoard = () => {
-  const [columns, setColumns] = useState({
-    todo: { title: "To Do", items: [] },
-    doing: { title: "Doing", limit: 5, items: [] },
-    done: { title: "Done", items: [] },
-  });
+const defaultColumns = {
+  todo: { title: "To Do", items: [] },
+  doing: { title: "Doing", limit: 5, items: [] },
+  done: { title: "Done", items: [] },
+};
 
+const KanbanBoard = () => {
+  const [columns, setColumns] = useState(defaultColumns);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);
+
+  useEffect(() => {
+    const saved = localStorage.getItem("kanban-columns");
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        setColumns(parsed);
+      } catch (e) {
+        console.error("Error parsing saved columns:", e);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("kanban-columns", JSON.stringify(columns));
+  }, [columns]);
 
   const handleSaveTask = (taskData) => {
     setColumns((prev) => {
@@ -28,7 +45,7 @@ const KanbanBoard = () => {
       } else {
         const newTask = {
           ...taskData,
-          id: generateId(), // 🔐 genera un ID seguro aquí
+          id: generateId(),
         };
         cols.todo.items = [...cols.todo.items, newTask];
       }
@@ -123,6 +140,25 @@ const KanbanBoard = () => {
                         >
                           <h4>{item.title}</h4>
                           {item.description && <p>{item.description}</p>}
+
+                          <div className="task-status">
+                            <span
+                              className={`status-dot ${
+                                columnId === "todo"
+                                  ? "todo"
+                                  : columnId === "doing"
+                                  ? "doing"
+                                  : "done"
+                              }`}
+                            ></span>
+                            <span className="status-text">
+                              {columnId === "todo"
+                                ? "To Do"
+                                : columnId === "doing"
+                                ? "In Progress"
+                                : "Completed"}
+                            </span>
+                          </div>
                         </div>
                       )}
                     </Draggable>

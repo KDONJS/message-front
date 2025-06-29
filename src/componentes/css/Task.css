@@ -66,3 +66,34 @@
   border-radius: 4px;
   cursor: pointer;
 }
+
+.task-status {
+  display: flex;
+  align-items: center;
+  margin-top: 8px;
+  font-size: 0.9rem;
+  color: #333;
+}
+
+.status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 6px;
+}
+
+.status-dot.todo {
+  background-color: gray;
+}
+
+.status-dot.doing {
+  background-color: #0078d4;
+}
+
+.status-dot.done {
+  background-color: green;
+}
+
+.status-text {
+  font-weight: 500;
+}

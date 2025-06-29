@@ -6,19 +6,24 @@ const TaskFormModal = ({ isOpen, onClose, onSave, initialData = {} }) => {
   const [description, setDescription] = useState("");
   const [priority, setPriority] = useState("2");
   const [effort, setEffort] = useState("");
+  const [hasSaved, setHasSaved] = useState(false); // ⚠️ Prevención de doble guardado
 
   useEffect(() => {
     setTitle(initialData.title || "");
     setDescription(initialData.description || "");
     setPriority(initialData.priority || "2");
     setEffort(initialData.effort || "");
-  }, [initialData]);
+    setHasSaved(false); // 🔁 Reset al abrir el modal
+  }, [initialData, isOpen]);
 
   const handleSave = () => {
+    if (hasSaved) return;
     if (!title.trim()) return alert("El campo 'Título' es obligatorio");
-    
+
+    setHasSaved(true);
+
     onSave({
-      ...(initialData.id ? { id: initialData.id } : {}), // Solo incluye id si es edición
+      ...(initialData.id ? { id: initialData.id } : {}),
       title,
       description,
       priority,
@@ -38,7 +43,7 @@ const TaskFormModal = ({ isOpen, onClose, onSave, initialData = {} }) => {
     <div className="modal-overlay">
       <div className="modal-container">
         <div className="modal-header">
-          <h2>Crear nueva tarea</h2>
+          <h2>{initialData.id ? "Editar tarea" : "Crear nueva tarea"}</h2>
         </div>
 
         <div className="modal-body">
