@@ -101,130 +101,162 @@ body, .msg-input, .chat-bubble-text {
 }
 
 /*Login*/
+/* Fondo borroso con degradado */
+.login-bg-img {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -2;
+  filter: blur(4px);
+}
+
+.login-bg-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(rgba(50, 50, 70, 0.6), rgba(10, 10, 20, 0.9));
+  z-index: -1;
+}
+
+/* Contenedor principal */
 .login-container {
-  display: flex;
   min-height: 100vh;
-  width: 100vw;
-  position: relative;
-  z-index: 1;
-  background: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 24px;
 }
 
+/* Card de login con efecto glass */
 .login-left {
-  background: #19316E;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 48px 32px;
-  min-width: 400px;
-  max-width: 480px;
-  z-index: 2;
-  box-shadow: 0 4px 32px rgba(0,0,0,0.18);
-  position: relative;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 24px;
+  padding: 40px 32px;
+  max-width: 400px;
+  width: 100%;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  color: white;
+  text-align: center;
 }
 
-.login-logo {
-  margin-bottom: 50px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
+/* Logo */
 .login-logo img {
-  width: 300px;
-  /* Ajusta este valor según el tamaño que desees */
-  max-width: 100%;
-  height: auto;
+  width: 240px;
+  margin-bottom: 16px;
 }
 
+
+/* Título */
 .login-title {
-  font-size: 2rem;
-  color: #ffffff;
-  margin-bottom: 8px;
+  font-size: 28px;
   font-weight: bold;
+  margin-bottom: 8px;
 }
 
+/* Subtítulo */
 .login-subtitle {
-  color: #ffffff;
+  font-size: 15px;
+  color: #ccc;
   margin-bottom: 24px;
 }
 
-.login-form {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
+/* Inputs */
 .login-input {
-  padding: 12px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  font-size: 1rem;
+  width: 100%;
+  padding: 12px 16px;
+  border: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+  background: transparent;
+  color: white;
+  font-size: 15px;
+  margin-bottom: 20px;
+  outline: none;
+  transition: border 0.3s;
 }
 
+.login-input::placeholder {
+  color: #aaa;
+}
+
+.login-input:focus {
+  border-bottom: 1px solid #6ab7ff;
+}
+
+/* Opciones de recordar y olvidaste */
 .login-options {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 0.95rem;
-  color: #ffffff;
+  font-size: 14px;
+  margin-bottom: 24px;
+  color: #ccc;
 }
 
-.login-link-forgot {
-  color: #c0392b;
-  text-decoration: none;
-  margin-left: 8px;
+.login-options input[type="checkbox"] {
+  accent-color: #6ab7ff;
+  margin-right: 8px;
 }
 
+/* Botón principal */
 .login-btn {
-  background: #c0392b;
-  color: #fff;
-  border: none;
-  border-radius: 6px;
+  width: 100%;
+  background-color: #2575fc; /* Azul sólido */
+  border: 2px solid #2575fc;
+  color: white;
   padding: 12px;
-  font-size: 1.1rem;
+  border-radius: 8px;
   font-weight: bold;
+  font-size: 16px;
   cursor: pointer;
-  margin-top: 8px;
+  transition: background 0.3s, color 0.3s, border 0.3s;
 }
 
+.login-btn:hover {
+  background-color: white;
+  color: #e53935; /* Rojo */
+  border: transparent 2px solid ;
+}
+
+
+/* Link olvidaste contraseña */
+.login-link-forgot {
+  font-size: 13px;
+  text-decoration: none;
+  color: #ccc;
+  transition: color 0.3s;
+}
+
+.login-link-forgot:hover {
+  color: #6ab7ff;
+}
+
+/* Link de registro */
 .login-register {
-  margin-top: 24px;
-  color: #ffffff;
+  margin-top: 20px;
+  font-size: 14px;
+  color: #ccc;
 }
 
 .login-link-register {
-  color: #c0392b;
+  color: #6ab7ff;
   cursor: pointer;
   margin-left: 4px;
+  transition: color 0.3s;
 }
 
-.login-right {
-  flex: 2;
-  position: relative;
-  overflow: hidden;
-  display: flex;
-  align-items: stretch;
+.login-link-register:hover {
+  color: #fff;
 }
 
-.login-bg-img,
-.login-bg-overlay {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100vw;
-  height: 100vh;
-  object-fit: cover;
-  z-index: 0;
-  display: block;
-  pointer-events: none;
-}
 
-.login-bg-overlay {
-  background: rgba(0,0,0,0.45);
-}
+
 /* logout */
 .logout-confirm-overlay {
   position: fixed;
@@ -550,10 +582,14 @@ body, .msg-input, .chat-bubble-text {
   .login-right {
     display: none !important;
   }
-  .login-logo {
-    margin-bottom: 0;
-    margin-top: 20px; /* Espacio arriba del logo */
-  }
+ .login-logo {
+  width: 100%;
+  text-align: center; /* Centra la imagen si no estás usando margin: auto */
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+
 }
 
 

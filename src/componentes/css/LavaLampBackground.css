@@ -1,0 +1,32 @@
+.lava-lamp-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: -1;
+  background: linear-gradient(to bottom, #2c3e50, #000000);
+}
+
+.lava-blob {
+  position: absolute;
+  will-change: transform;
+  mix-blend-mode: screen;
+}
+
+/* Add these to your existing login styles */
+.login-bg-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: -1;
+}
+
+.login-container {
+  position: relative;
+  z-index: 1;
+}
